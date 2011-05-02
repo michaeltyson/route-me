@@ -1,7 +1,7 @@
 //
-//  RMMapLayer.m
-//
-// Copyright (c) 2008-2009, Route-Me Contributors
+// RouteMe.h
+// 
+// Copyright (c) 2008-2011, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -25,49 +25,20 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import "RMMapLayer.h"
-#import "RMPixel.h"
+// The list of header files for more convenient Route-Me import to projects.
+// (in alphabetic order)
 
-@implementation RMMapLayer
+// P.S. The list isn't full. Need to add missing header files, when required
 
-- (id) init
-{
-	if (![super init])
-		return nil;
-	
-	return self;
-}
+#import "RMAbstractMercatorWebSource.h"
+#import "RMCircle.h"
+#import "RMLayerCollection.h"
+#import "RMMapContents.h"
+#import "RMMapView.h"
+#import "RMMarkerManager.h"
+#import "RMPath.h"
+#import "RMProjection.h"
+#import "RMTileLoader.h"
+#import "RMTileSource.h"
 
-- (id)initWithLayer:(id)layer
-{
-	if (![super initWithLayer:layer])
-		return nil;
-	
-	return self;
-}
-
-/// \bug why return nil for the "position" and "bounds" actionForKey? Does this do anything besides block Core Animation?
-- (id<CAAction>)actionForKey:(NSString *)key
-{
-	if ([key isEqualToString:@"position"]
-		|| [key isEqualToString:@"bounds"])
-		return nil;
-	
-	else return [super actionForKey:key];
-}
-
-- (void)moveBy: (CGSize) delta
-{
-	self.position = RMTranslateCGPointBy(self.position, delta);
-}
-
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) pivot
-{
-    // a empty layer has size=(0,0) which cause divide by 0 if scaled
-    if(self.bounds.size.width == 0.0 || self.bounds.size.height == 0.0)
-        return;
-	self.position = RMScaleCGPointAboutPoint(self.position, zoomFactor, pivot);
-	self.bounds = RMScaleCGRectAboutPoint(self.bounds, zoomFactor, self.anchorPoint);
-}
-
-@end
+#import "NSUserDefaults+RouteMe.h"

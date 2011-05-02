@@ -1,7 +1,7 @@
 //
-//  RMMapLayer.m
+//  RMWMS.h
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008-2011, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -25,49 +25,46 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import "RMMapLayer.h"
-#import "RMPixel.h"
+#import <Foundation/Foundation.h>
 
-@implementation RMMapLayer
 
-- (id) init
-{
-	if (![super init])
-		return nil;
-	
-	return self;
+@interface RMWMS : NSObject {
+
+    NSString *urlPrefix;
+    NSString *layers;
+    NSString *styles;
+    NSString *queryLayers;
+    NSString *crs;
+    BOOL queryable;
+    NSString *infoFormat;
+    NSString *format;
+    NSString *service;
+    NSString *version;
+    NSString *exceptions;
+    
 }
 
-- (id)initWithLayer:(id)layer
-{
-	if (![super initWithLayer:layer])
-		return nil;
-	
-	return self;
-}
+@property (retain) NSString *urlPrefix;
+@property (retain) NSString *layers;
+@property (retain) NSString *styles;
+@property (retain) NSString *queryLayers;
+@property (retain) NSString *crs;
+@property BOOL queryable;
+@property (retain) NSString *infoFormat;
+@property (retain) NSString *format;
+@property (retain) NSString *service;
+@property (retain) NSString *version;
+@property (retain) NSString *exceptions;
 
-/// \bug why return nil for the "position" and "bounds" actionForKey? Does this do anything besides block Core Animation?
-- (id<CAAction>)actionForKey:(NSString *)key
-{
-	if ([key isEqualToString:@"position"]
-		|| [key isEqualToString:@"bounds"])
-		return nil;
-	
-	else return [super actionForKey:key];
-}
+-(NSString *)createGetMapForBbox:(NSString *)bbox size:(CGSize)size;
+-(NSString *)createGetFeatureInfoForBbox:(NSString *)bbox size:(CGSize)size point:(CGPoint)point;
+-(NSString *)createGetCapabilities;
 
-- (void)moveBy: (CGSize) delta
-{
-	self.position = RMTranslateCGPointBy(self.position, delta);
-}
-
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) pivot
-{
-    // a empty layer has size=(0,0) which cause divide by 0 if scaled
-    if(self.bounds.size.width == 0.0 || self.bounds.size.height == 0.0)
-        return;
-	self.position = RMScaleCGPointAboutPoint(self.position, zoomFactor, pivot);
-	self.bounds = RMScaleCGRectAboutPoint(self.bounds, zoomFactor, self.anchorPoint);
-}
+-(BOOL)isVisible;
+-(BOOL)selected:(NSString *)layerName;
+-(void)select:(NSString *)layerName queryable:(BOOL)queryable;
+-(void)deselect:(NSString *)layerName;
+-(void)setSelectedLayerNames:(NSArray *)layerNames;
+-(NSArray *)selectedLayerNames;
 
 @end

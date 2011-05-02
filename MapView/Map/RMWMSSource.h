@@ -1,7 +1,7 @@
 //
-//  RMMapLayer.m
+//  RMWMSSource.h
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008-2011, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -25,49 +25,47 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import "RMMapLayer.h"
-#import "RMPixel.h"
+#import <Foundation/Foundation.h>
 
-@implementation RMMapLayer
+#import "RMAbstractMercatorWebSource.h"
+#import "RMTile.h"
+#import "RMWMS.h"
 
-- (id) init
-{
-	if (![super init])
-		return nil;
-	
-	return self;
+/*! 
+ \brief Subclass of RMAbstractMercatorWebSource for access to OGC WMS Server.
+ 
+ Example:
+ RMWMS *wms = [[RMWMS alloc] init];
+ [wms setUrlPrefix:@"http://vmap0.tiles.osgeo.org/wms/vmap0"];
+ [wms setLayers:@"basic"];
+ RMWMSSource *wmsSource = [[RMWMSSource alloc] init];
+ [wmsSource setWms:wms];
+ [mapContents setTileSource:wmsSource];
+ [wmsSource release];
+ [wms release];
+ */
+@interface RMWMSSource : RMAbstractMercatorWebSource <RMAbstractMercatorWebSource> {
+
+    float initialResolution;
+    float originShift;
+    
+    float minZoom;
+    float maxZoom;
+    NSString *name;
+    NSString *uniqueTilecacheKey;
+    
+    RMWMS *wms;
+    
 }
 
-- (id)initWithLayer:(id)layer
-{
-	if (![super initWithLayer:layer])
-		return nil;
-	
-	return self;
-}
+@property float minZoom;
+@property float maxZoom;
+@property (retain) NSString *name;
+@property (retain) NSString *uniqueTilecacheKey;
+@property (retain) RMWMS *wms;
 
-/// \bug why return nil for the "position" and "bounds" actionForKey? Does this do anything besides block Core Animation?
-- (id<CAAction>)actionForKey:(NSString *)key
-{
-	if ([key isEqualToString:@"position"]
-		|| [key isEqualToString:@"bounds"])
-		return nil;
-	
-	else return [super actionForKey:key];
-}
-
-- (void)moveBy: (CGSize) delta
-{
-	self.position = RMTranslateCGPointBy(self.position, delta);
-}
-
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) pivot
-{
-    // a empty layer has size=(0,0) which cause divide by 0 if scaled
-    if(self.bounds.size.width == 0.0 || self.bounds.size.height == 0.0)
-        return;
-	self.position = RMScaleCGPointAboutPoint(self.position, zoomFactor, pivot);
-	self.bounds = RMScaleCGRectAboutPoint(self.bounds, zoomFactor, self.anchorPoint);
-}
+-(NSString*) bboxForTile: (RMTile) tile;
+-(float) resolutionAtZoom : (int) zoom ;
+-(CGPoint) pixelsToMetersAtZoom: (int) px PixelY:(int)py atResolution:(float) resolution ;
 
 @end

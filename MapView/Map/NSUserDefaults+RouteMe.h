@@ -1,7 +1,7 @@
 //
-//  RMMapLayer.m
-//
-// Copyright (c) 2008-2009, Route-Me Contributors
+//  NSUserDefaults+RouteMe.h
+// 
+// Copyright (c) 2008-2011, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -24,50 +24,28 @@
 // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
+//
 
-#import "RMMapLayer.h"
-#import "RMPixel.h"
+//
+// If you link your Route-Me to your project as a static libary,
+// add to your project's build param Other Linker Flags (OTHER_LDFLAGS) '-all_load' (without quotes).
+//
 
-@implementation RMMapLayer
+#import <Foundation/Foundation.h>
+#import "RMFoundation.h"
 
-- (id) init
-{
-	if (![super init])
-		return nil;
-	
-	return self;
-}
+@interface NSUserDefaults (RouteMe) 
 
-- (id)initWithLayer:(id)layer
-{
-	if (![super initWithLayer:layer])
-		return nil;
-	
-	return self;
-}
+/// Returns the projected point associated with the specified key.
+- (RMProjectedPoint)projectedPointForKey:(NSString *)key;
 
-/// \bug why return nil for the "position" and "bounds" actionForKey? Does this do anything besides block Core Animation?
-- (id<CAAction>)actionForKey:(NSString *)key
-{
-	if ([key isEqualToString:@"position"]
-		|| [key isEqualToString:@"bounds"])
-		return nil;
-	
-	else return [super actionForKey:key];
-}
+/// Sets the value of the specified default key to the specified projected point.
+- (void)setProjectedPoint:(RMProjectedPoint)projectedPoint forKey:(NSString *)key;
 
-- (void)moveBy: (CGSize) delta
-{
-	self.position = RMTranslateCGPointBy(self.position, delta);
-}
+/// Returns the projected rectangle associated with the specified key.
+- (RMProjectedRect)projectedRectForKey:(NSString *)key;
 
-- (void)zoomByFactor: (float) zoomFactor near:(CGPoint) pivot
-{
-    // a empty layer has size=(0,0) which cause divide by 0 if scaled
-    if(self.bounds.size.width == 0.0 || self.bounds.size.height == 0.0)
-        return;
-	self.position = RMScaleCGPointAboutPoint(self.position, zoomFactor, pivot);
-	self.bounds = RMScaleCGRectAboutPoint(self.bounds, zoomFactor, self.anchorPoint);
-}
+/// Sets the value of the specified default key to the specified projected rectangle.
+- (void)setProjectedRect:(RMProjectedRect)projectedRect forKey:(NSString *)key;
 
 @end
