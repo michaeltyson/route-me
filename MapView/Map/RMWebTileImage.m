@@ -77,7 +77,7 @@ NSString *RMWebTileImageNotificationErrorKey = @"RMWebTileImageNotificationError
 	if(connection) // re-request
 	{
 		//RMLog(@"Refetching: %@: %d", url, retries);
-		
+        [connection cancel];
 		[connection release];
 		connection = nil;
 
