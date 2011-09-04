@@ -1,7 +1,7 @@
 //
-//  OpenCycleMapSource.m
+//  RMMapQuestOSMSource.m
 //
-// Copyright (c) 2008-2009, Route-Me Contributors
+// Copyright (c) 2008-2011, Route-Me Contributors
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -25,9 +25,9 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#import "RMOpenCycleMapSource.h"
+#import "RMMapQuestOSMSource.h"
 
-@implementation RMOpenCycleMapSource
+@implementation RMMapQuestOSMSource
 
 -(id) init
 {       
@@ -44,29 +44,29 @@
 	NSAssert4(((tile.zoom >= self.minZoom) && (tile.zoom <= self.maxZoom)),
 			  @"%@ tried to retrieve tile with zoomLevel %d, outside source's defined range %f to %f", 
 			  self, tile.zoom, self.minZoom, self.maxZoom);
-	return [NSString stringWithFormat:@"http://tile.opencyclemap.org/cycle/%d/%d/%d.png", tile.zoom, tile.x, tile.y];
+	return [NSString stringWithFormat:@"http://otile1.mqcdn.com/tiles/1.0.0/osm/%d/%d/%d.png", tile.zoom, tile.x, tile.y];
 }
 
 -(NSString*) uniqueTilecacheKey
 {
-	return @"OpenCycleMap";
+	return @"MapQuestOSM";
 }
 
 -(NSString *)shortName
 {
-	return @"OpenCycleMap";
+	return @"MapQuest";
 }
 -(NSString *)longDescription
 {
-	return @"OpenCycleMap, a worldwide map for cyclists based on OpenStreetMap data, available under the Creative Commons Attribution-Share Alike 2.0 license.";
+	return @"Map tiles courtesy of MapQuest.";
 }
 -(NSString *)shortAttribution
 {
-	return @"© OpenCycleMap CC-BY-SA";
+	return @"Tiles courtesy of MapQuest.";
 }
 -(NSString *)longAttribution
 {
-	return @"Map data © OpenCycleMap, licensed under Creative Commons Share Alike By Attribution.";
+	return @"Tiles courtesy of MapQuest and OpenStreetMap contributors.";
 }
 
 @end
