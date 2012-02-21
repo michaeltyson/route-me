@@ -60,7 +60,11 @@ NSString *RMWebTileImageNotificationErrorKey = @"RMWebTileImageNotificationError
 
 - (void) dealloc
 {
-	[self cancelLoading];
+    [connection cancel];
+	[connection release];
+	connection = nil;
+	
+    if ( lastError ) [lastError release]; lastError = nil;
 	
 	[data release];
 	data = nil;
@@ -77,7 +81,7 @@ NSString *RMWebTileImageNotificationErrorKey = @"RMWebTileImageNotificationError
 	if(connection) // re-request
 	{
 		//RMLog(@"Refetching: %@: %d", url, retries);
-        [connection cancel];
+		[connection cancel];
 		[connection release];
 		connection = nil;
 
@@ -257,7 +261,15 @@ NSString *RMWebTileImageNotificationErrorKey = @"RMWebTileImageNotificationError
 	}
 	else
 	{
-		[self updateImageUsingData:data];
+		if ( ![self updateImageUsingData:data] ) {
+            if ( lastError ) [lastError release];
+            lastError = [[NSError errorWithDomain:RMWebTileImageErrorDomain 
+                                             code:RMWebTileImageErrorUnexpectedHTTPResponse
+                                         userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
+                                                   NSLocalizedString(@"The server returned an invalid response", @""), NSLocalizedDescriptionKey, nil]] retain];
+            [self requestTile];
+            return;
+        }
 		
 		[data release];
 		data = nil;
